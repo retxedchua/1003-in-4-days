@@ -8,6 +8,7 @@ uint8_t (*editorHandler)(uint8_t, int*, char*, void (*)()) = NULL;
 
 
 const uint8_t upButton = TSButtonUpperRight;
+const uint8_t next = TSButtonUpperRight;
 const uint8_t downButton = TSButtonLowerRight;
 const uint8_t selectButton = TSButtonLowerLeft;
 const uint8_t backButton = TSButtonUpperLeft;
@@ -24,6 +25,10 @@ void buttonPress(uint8_t buttons) {
       menuHandler = viewMenu;
       menuHandler(0);
     }
+    else if (buttons == next) {
+      menuHandler = viewNotifications1;
+      menuHandler(0);
+    }
   } else if (currentDisplayState == displayStateMenu) {
     if (menuHandler) {
       menuHandler(buttons);
@@ -33,6 +38,69 @@ void buttonPress(uint8_t buttons) {
       editorHandler(buttons, 0, 0, NULL);
     }
   }
+}
+
+void viewNotifications1(uint8_t button) {
+  
+    currentDisplayState = displayStateMenu;
+      int result = 0;
+      result = temp;
+  //SerialMonitorInterface.println(result);
+  //if(result>440){//probably charging
+  uint8_t charging = false;
+      if (result > 450) {
+    charging = true;
+  }
+  result = constrain(result - 300, 0, 120);
+  uint8_t x = 70;
+  uint8_t y = 30;
+  uint8_t height = 5;
+  uint8_t length = 20;
+  uint8_t amtActive = (result * length) / 120;
+  uint8_t red, green, blue;
+  display.drawLine(x - 1, y, x - 1, y + height, 0xFF); //left boarder
+  display.drawLine(x - 1, y - 1, x + length, y - 1, 0xFF); //top border
+  display.drawLine(x - 1, y + height + 1, x + length, y + height + 1, 0xFF); //bottom border
+  display.drawLine(x + length, y - 1, x + length, y + height + 1, 0xFF); //right border
+  display.drawLine(x + length + 1, y + 2, x + length + 1, y + height - 2, 0xFF); //right border
+  for (uint8_t i = 0; i < length; i++) {
+    if (i < amtActive) {
+      red = 63 - ((63 / length) * i);
+      green = ((63 / length) * i);
+      blue = 0;
+    } else {
+      red = 32;
+      green = 32;
+      blue = 32;
+    }
+    display.drawLine(x + i, y, x + i, y + height, red, green, blue);
+  }
+   display.clearWindow(0, 12, 96, 64);
+    display.setFont(font10pt);
+    display.fontColor(defaultFontColor, defaultFontBG);
+    
+       display.setCursor(0, menuTextY[0]);
+       display.print("Temperate:");
+     display.println(temp);
+      char backStr[] = "Back >";
+      int Xpos = 95 - display.getPrintWidth(backStr);
+      display.setCursor(Xpos, menuTextY[3]);
+      display.print(backStr);
+ 
+    if (button == clearButton) {//actually back?
+        display.print(F("  Bye."));
+      currentDisplayState = displayStateHome;
+      initHomeScreen();
+    } else if (button == selectButton) { //do action
+         display.clearWindow(0, 12, 96, 64);
+    display.setFont(font10pt);
+    display.fontColor(defaultFontColor, defaultFontBG);
+    
+       display.setCursor(0, menuTextY[0]);
+      display.print(F("  Correct!."));
+  
+  }
+      
 }
 
 void viewNotifications(uint8_t button) {

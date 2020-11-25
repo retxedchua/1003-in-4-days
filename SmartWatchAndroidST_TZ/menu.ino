@@ -44,17 +44,19 @@ void newMenu(int8_t newIndex) {
 static const char PROGMEM mainMenuStrings0[] = "Set date/time";
 static const char PROGMEM mainMenuStrings1[] = "Set auto off";
 static const char PROGMEM mainMenuStrings2[] = "Set brightness";
+static const char PROGMEM mainMenuStrings3[] = "FlappyBirds";
 
 static const char* const PROGMEM mainMenuStrings[] =
 {
   mainMenuStrings0,
   mainMenuStrings1,
   mainMenuStrings2,
+  mainMenuStrings3,
 };
 
 const menu_info mainMenuInfo =
 {
-  3,
+  4,
   mainMenuStrings,
   mainMenu,
 };
@@ -173,6 +175,11 @@ void mainMenu(uint8_t selection) {
     editInt(0, &sleepTimeout, buffer, NULL);
   }
   if (selection == 2) {
+    char buffer[20];
+    strcpy_P(buffer, (PGM_P)pgm_read_word(&(menuList[mainMenuIndex].strings[selection])));
+    editInt(0, &brightness, buffer, NULL);
+  }
+    if (selection == 3) {
     char buffer[20];
     strcpy_P(buffer, (PGM_P)pgm_read_word(&(menuList[mainMenuIndex].strings[selection])));
     editInt(0, &brightness, buffer, NULL);
