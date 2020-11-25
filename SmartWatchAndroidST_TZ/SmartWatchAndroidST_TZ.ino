@@ -1,5 +1,5 @@
 #include <STBLE.h>
-
+#include <math.h>
 //-------------------------------------------------------------------------------
 //  TinyCircuits TinyScreen/ST BLE Smartwatch Example Sketch
 //  Last Updated 26 October 2017
@@ -27,7 +27,7 @@ unsigned long millisOffsetCount = 0;
 
 // Accelerometer sensor variables for the sensor and its values
 BMA250 accel_sensor;
-int x, y, z;
+int x, y, z,steptracker;
 double temp;
 
 
@@ -244,6 +244,15 @@ void loop() {
   y = accel_sensor.Y;
   z = accel_sensor.Z;
   temp = ((accel_sensor.rawTemp * 0.5) + 24.0);
+  double MagnitudePrevious = 0;
+  
+  double Magnitude = sqrt(x*x+y*y+z*z);
+  double MagnitudeDelta = Magnitude - MagnitudePrevious;
+  MagnitudePrevious = Magnitude;
+
+  if(MagnitudeDelta>265){
+    steptracker++;
+  }
 
   // If the BMA250 is not found, nor connected correctly, these values will be produced
   // by the sensor 
@@ -258,7 +267,7 @@ void loop() {
 
   // The BMA250 can only poll new sensor values every 64ms, so this delay
   // will ensure that we can continue to read values
-  delay(250);
+  delay(500);
   // ***Without the delay, there would not be any sensor output*** 
 }
 
@@ -316,4 +325,8 @@ void showSerial() {
   
   SerialMonitorInterface.print("  Temperature(C) = ");
   SerialMonitorInterface.println(temp);
+
+  SerialMonitorInterface.print("  Footsteps = ");
+  SerialMonitorInterface.println(steptracker);
+  
 }

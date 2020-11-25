@@ -80,8 +80,9 @@ void viewNotifications1(uint8_t button) {
     display.fontColor(defaultFontColor, defaultFontBG);
     
        display.setCursor(0, menuTextY[0]);
-       display.print("Temperate:");
-     display.println(temp);
+       display.print("Temp:");
+     //display.println(temp);
+     display.println(steptracker);
       char backStr[] = "Back >";
       int Xpos = 95 - display.getPrintWidth(backStr);
       display.setCursor(Xpos, menuTextY[3]);
