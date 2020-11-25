@@ -33,13 +33,13 @@ TinyScreen display = TinyScreen(TinyScreenDefault);
 
 #elif defined(ARDUINO_ARCH_SAMD)
 TinyScreen display = TinyScreen(TinyScreenDefault);
-#define SerialMonitorInterface; SerialUSB
+#define SerialMonitorInterface SerialUSB
 #include <RTCZero.h>
 #include <time.h>
 RTCZero RTCZ;
 uint32_t startTime = 0;
 uint32_t sleepTime = 0;
-unsigned long millisOffsetCount2 = 0;
+unsigned long millisOffsetCount = 0;
 
 void wakeHandler() {
   if (sleepTime) {
@@ -53,7 +53,7 @@ void RTCwakeHandler() {
 }
 
 void watchSleep() {
-  if (doVibrate )
+  if (doVibrate || ble_can_sleep)
     return;
   sleepTime = RTCZ.getEpoch();
   RTCZ.standbyMode();

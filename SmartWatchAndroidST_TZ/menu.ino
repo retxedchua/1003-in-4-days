@@ -41,58 +41,24 @@ void newMenu(int8_t newIndex) {
   }
 }
 
-static const char PROGMEM mainMenuStrings0[] = "Stopwatch/Timer";
-static const char PROGMEM mainMenuStrings1[] = "Settings";
-//static const char PROGMEM mainMenuStrings1[] = "Set date/time";
-//static const char PROGMEM mainMenuStrings2[] = "Set auto off";
-//static const char PROGMEM mainMenuStrings3[] = "Set brightness";
+static const char PROGMEM mainMenuStrings0[] = "Set date/time";
+static const char PROGMEM mainMenuStrings1[] = "Set auto off";
+static const char PROGMEM mainMenuStrings2[] = "Set brightness";
 
 static const char* const PROGMEM mainMenuStrings[] =
 {
   mainMenuStrings0,
   mainMenuStrings1,
+  mainMenuStrings2,
 };
 
 const menu_info mainMenuInfo =
 {
-  2,
+  3,
   mainMenuStrings,
   mainMenu,
 };
 
-static const char PROGMEM stopwTimerMenuStrings0[] = "Stop Watch";
-static const char PROGMEM stopwTimerMenuStrings1[] = "Timer";
-
-static const char* const PROGMEM stopwTimerMenuStrings[] =
-{
-  stopwTimerMenuStrings0,
-  stopwTimerMenuStrings1,
-};
-
-const menu_info stopwTimerMenuInfo =
-{
-  2,
-  stopwTimerMenuStrings,
-  stopwTimerMenu,
-};
-
-static const char PROGMEM settingsMenuStrings0[] = "Set date/time";
-static const char PROGMEM settingsMenuStrings1[] = "Set auto off";
-static const char PROGMEM settingsMenuStrings2[] = "Set brightness";
-
-static const char* const PROGMEM settingsMenuStrings[] =
-{
-  settingsMenuStrings0,
-  settingsMenuStrings1,
-  settingsMenuStrings2,
-};
-
-const menu_info settingsMenuInfo =
-{
-  3,
-  settingsMenuStrings,
-  settingsMenu,
-};
 
 static const char PROGMEM dateTimeMenuStrings0[] = "Set Year";
 static const char PROGMEM dateTimeMenuStrings1[] = "Set Month";
@@ -118,11 +84,9 @@ const menu_info dateTimeMenuInfo =
   dateTimeMenu,
 };
 
-const menu_info menuList[] = {mainMenuInfo, dateTimeMenuInfo, stopwTimerMenuInfo, settingsMenuInfo};
+const menu_info menuList[] = {mainMenuInfo, dateTimeMenuInfo};
 #define mainMenuIndex 0
 #define dateTimeMenuIndex 1
-#define stopwTimerMenuIndex 2
-#define settingsMenuIndex 3
 
 int currentVal = 0;
 int digits[4];
@@ -201,10 +165,17 @@ uint8_t editInt(uint8_t button, int *inVal, char *intName, void (*cb)()) {
 void mainMenu(uint8_t selection) {
   if (menu_debug_print)SerialMonitorInterface.println("mainMenuHandler");
   if (selection == 0) {
-    newMenu(stopwTimerMenuIndex);
+    newMenu(dateTimeMenuIndex);
   }
   if (selection == 1) {
-    newMenu(settingsMenuIndex);
+    char buffer[20];
+    strcpy_P(buffer, (PGM_P)pgm_read_word(&(menuList[mainMenuIndex].strings[selection])));
+    editInt(0, &sleepTimeout, buffer, NULL);
+  }
+  if (selection == 2) {
+    char buffer[20];
+    strcpy_P(buffer, (PGM_P)pgm_read_word(&(menuList[mainMenuIndex].strings[selection])));
+    editInt(0, &brightness, buffer, NULL);
   }
 }
 
@@ -227,34 +198,6 @@ void saveChangeCallback() {
   if (menu_debug_print)SerialMonitorInterface.println(dateTimeVariable);
 }
 
-void stopwTimerMenu(uint8_t selection) {
-  if (menu_debug_print)SerialMonitorInterface.print("stopwTimerMenu ");
-  if (menu_debug_print)SerialMonitorInterface.print(selection);
-  if (selection == 0) {
-    
-  }
-  if (selection == 1) {
-    
-  }
-}
-
-void settingsMenu(uint8_t selection){
-  if (menu_debug_print)SerialMonitorInterface.print("settingsMenu ");
-  if (menu_debug_print)SerialMonitorInterface.print(selection);
-  if (selection == 0) {
-    newMenu(dateTimeMenuIndex);
-  }
-  if (selection == 1) {
-    char buffer[20];
-    strcpy_P(buffer, (PGM_P)pgm_read_word(&(menuList[mainMenuIndex].strings[selection])));
-    editInt(0, &sleepTimeout, buffer, NULL);
-  }
-  if (selection == 2) {
-    char buffer[20];
-    strcpy_P(buffer, (PGM_P)pgm_read_word(&(menuList[mainMenuIndex].strings[selection])));
-    editInt(0, &brightness, buffer, NULL);
-  }
-}
 
 void dateTimeMenu(uint8_t selection) {
   if (menu_debug_print)SerialMonitorInterface.print("dateTimeMenu ");
