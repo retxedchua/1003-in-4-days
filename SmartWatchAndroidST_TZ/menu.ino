@@ -206,7 +206,8 @@ void mainMenu(uint8_t selection) {
     newMenu(settingsMenuIndex);
   }
   if (selection == 2) {
-    viewNotifications1;
+    const uint8_t backButton = TSButtonUpperLeft;
+    viewNotifications1(backButton);
   }
 }
 
@@ -233,7 +234,7 @@ void stopwTimerMenu(uint8_t selection) {
   if (menu_debug_print)SerialMonitorInterface.print("stopwTimerMenu ");
   if (menu_debug_print)SerialMonitorInterface.print(selection);
   if (selection == 0) {
-      
+      stopWatch(selection);
   }
   if (selection == 1) {
     
