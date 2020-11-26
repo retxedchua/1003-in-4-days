@@ -1,10 +1,12 @@
 const uint8_t displayStateHome = 0x01;
 const uint8_t displayStateMenu = 0x02;
 const uint8_t displayStateEditor = 0x03;
+const uint8_t displayStateStopWatch = 0x04;
 
 uint8_t currentDisplayState = displayStateHome;
 void (*menuHandler)(uint8_t) = NULL;
 uint8_t (*editorHandler)(uint8_t, int*, char*, void (*)()) = NULL;
+uint8_t (*stopWatchHandler)(uint8_t, int*, char*, void (*)()) =NULL;
 
 
 const uint8_t upButton = TSButtonUpperRight;
@@ -15,6 +17,9 @@ const uint8_t backButton = TSButtonUpperLeft;
 const uint8_t menuButton = TSButtonLowerLeft;
 const uint8_t viewButton = TSButtonLowerRight;
 const uint8_t clearButton = TSButtonLowerRight;
+const uint8_t startButton = TSButtonLowerLeft;
+const uint8_t lapButton = TSButtonLowerRight;
+const uint8_t resetButton = TSButtonUpperRight;
 
 void buttonPress(uint8_t buttons) {
   if (currentDisplayState == displayStateHome) {
@@ -37,9 +42,109 @@ void buttonPress(uint8_t buttons) {
     if (editorHandler) {
       editorHandler(buttons, 0, 0, NULL);
     }
+  } else if (currentDisplayState == displayStateStopWatch){
+      if(buttons == startButton){
+        stopWatchLoop(buttons);
+      }
+}
+
+void stopWatch(uint8_t button) {
+  display.clearWindow(0, 12, 96, 64);
+  currentDisplayState = displayStateStopWatch;
+  display.setFont(font10pt);
+  display.setCursor(0, menuTextY[0]);
+  display.println("Stop watch");
+  display.setFont(font22pt);
+  display.setCursor(0,menuTextY[2]);
+  display.print("00:00:00");
+  display.setFont(font10pt);
+  display.print("00");
+  
+  if (button == backButton) {
+    display.clearWindow(0, 12, 96, 64);
+    menuHandler = viewMenu;
+    menuHandler(0);
   }
 }
 
+void stopWatchLoop(uint8_t button){
+  int cs1, cs10, s1, s10, m1, m10, h1, h10;
+  unsigned long startTime,pauseTime,lapTime;
+  unsigned long difference;
+  boolean pause = false;
+  cs1 = 0;
+  cs10 = 0;
+  s1 = 0;
+  s10 = 0;
+  m1 = 0;
+  m10 = 0;
+  h1 = 0;
+  h10 = 0;
+  startTime = millis();
+  pauseTime = 0;
+  lapTime = 0;
+  while(true){
+  difference = millis()-startTime-pauseTime;
+  h10 = difference / 36000000;      //3600 * 1000 * 10
+  difference %= 36000000;  //3600 * 1000 * 10
+  h1 = difference / 3600000;
+  difference %= 3600000;
+  m10 = difference / 600000;
+  difference %= 600000;
+  m1 = difference / 60000;
+  difference %= 60000;
+  s10 = difference / 10000;
+  difference %= 10000;
+  s1 = difference / 1000;
+  difference %= 1000;
+  cs10 = difference / 100;
+  difference %= 100;
+  cs1 = difference / 10;
+  if(pauseTime == false){
+    display.setFont(font22pt);
+    display.setCursor(0,menuTextY[2]);
+    display.print(h10);
+    display.print(h1);
+    display.print(":");
+    display.print(m10);
+    display.print(m1);
+    display.print(":");
+    display.print(s10);
+    display.print(s1);
+    display.setFont(font10pt);
+    display.print(cs10);
+    display.print(cs1); 
+  }
+  /*pressed = getButtons();
+  if(pressed == startButton){
+    if(pause == true){
+      pauseTime = millis()-pauseTime;
+      pauseTime = false;
+    }else{
+      pauseTime = millis();
+      pause = true;
+    }
+  }
+  else if (pressed == lapButton)
+  {
+    lapTime = (difference - lapTime);
+    String lapString = String(m10)+String(m1)+":"+String(s10)+String(s1);
+    display.setCursor(66, menuTextY[0]);
+    display.setFont(font10pt);
+    display.print(lapString);
+  } else if (button == resetButton)
+  {
+    
+  }*/
+  }
+  
+  
+}
+
+void Timer(uint8_t button)  {
+   display.clearWindow(0, 12, 96, 64);
+
+}
 void viewNotifications1(uint8_t button) {
   
     currentDisplayState = displayStateMenu;
@@ -93,12 +198,12 @@ void viewNotifications1(uint8_t button) {
       currentDisplayState = displayStateHome;
       initHomeScreen();
     } else if (button == selectButton) { //do action
-         display.clearWindow(0, 12, 96, 64);
-    display.setFont(font10pt);
-    display.fontColor(defaultFontColor, defaultFontBG);
+        display.clearWindow(0, 12, 96, 64);
+        display.setFont(font10pt);
+        display.fontColor(defaultFontColor, defaultFontBG);
     
-       display.setCursor(0, menuTextY[0]);
-      display.print(F("  Correct!."));
+        display.setCursor(0, menuTextY[0]);
+        display.print(F("  Correct!."));
   
   }
       
