@@ -43,34 +43,35 @@ void newMenu(int8_t newIndex) {
 
 static const char PROGMEM mainMenuStrings0[] = "Stopwatch/Timer";
 static const char PROGMEM mainMenuStrings1[] = "Settings";
-static const char PROGMEM mainMenuStrings2[] = "Step Tracker";
+static const char PROGMEM mainMenuStrings2[] = "Temperature";
+static const char PROGMEM mainMenuStrings3[] = "Step Tracker";
+
 
 static const char* const PROGMEM mainMenuStrings[] =
 {
   mainMenuStrings0,
   mainMenuStrings1,
   mainMenuStrings2,
+  mainMenuStrings3
 };
 
 const menu_info mainMenuInfo =
 {
-  3,
+  4,
   mainMenuStrings,
   mainMenu,
 };
 
 static const char PROGMEM stopwTimerMenuStrings0[] = "Stop Watch";
-static const char PROGMEM stopwTimerMenuStrings1[] = "Timer";
 
 static const char* const PROGMEM stopwTimerMenuStrings[] =
 {
-  stopwTimerMenuStrings0,
-  stopwTimerMenuStrings1,
+  stopwTimerMenuStrings0
 };
 
 const menu_info stopwTimerMenuInfo =
 {
-  2,
+  1,
   stopwTimerMenuStrings,
   stopwTimerMenu,
 };
@@ -83,7 +84,7 @@ static const char* const PROGMEM settingsMenuStrings[] =
 {
   settingsMenuStrings0,
   settingsMenuStrings1,
-  settingsMenuStrings2,
+  settingsMenuStrings2
 };
 
 const menu_info settingsMenuInfo =
@@ -206,8 +207,12 @@ void mainMenu(uint8_t selection) {
     newMenu(settingsMenuIndex);
   }
   if (selection == 2) {
-    const uint8_t backButton = TSButtonUpperLeft;
-    viewNotifications1(backButton);
+    const uint8_t backButton = TSButtonLowerLeft;
+    displayTemp(backButton);
+  }
+    if (selection == 3) {
+    const uint8_t backButton = TSButtonLowerLeft;
+    displayFootTracker(backButton);
   }
 }
 
