@@ -225,7 +225,12 @@ void displayFootTracker(uint8_t button) {
       int Xpos = 95 - display.getPrintWidth(backStr);
       display.setCursor(Xpos, menuTextY[3]);
       display.print(backStr);
- 
+       display.setCursor(0, menuTextY[3]);
+      display.print("Reset");
+      
+     if (button == selectButton) {
+      steptracker =0;
+    } 
     if (button == clearButton) {//actually back?
       currentDisplayState = displayStateHome;
       initHomeScreen();
