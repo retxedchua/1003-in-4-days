@@ -44,7 +44,8 @@ void buttonPress(uint8_t buttons) {
     }
   } else if (currentDisplayState == displayStateStopWatch){
       if(buttons == startButton){
-        stopWatchLoop(buttons);
+          stopWatchLoop(buttons);
+          }
       }
 }
 
@@ -69,9 +70,10 @@ void stopWatch(uint8_t button) {
 
 void stopWatchLoop(uint8_t button){
   int cs1, cs10, s1, s10, m1, m10, h1, h10;
-  unsigned long startTime,pauseTime,lapTime;
-  unsigned long difference;
-  boolean pause = false;
+  uint32_t stopWstart, pauseTime, lapTime, difference, totalPauseTime;
+  boolean pause = false,reset = false;
+  byte pressed;
+  uint8_t buttonReleasedtwo = 1;
   cs1 = 0;
   cs10 = 0;
   s1 = 0;
@@ -80,11 +82,13 @@ void stopWatchLoop(uint8_t button){
   m10 = 0;
   h1 = 0;
   h10 = 0;
-  startTime = millis();
+  stopWstart = millis();
+  difference = 0;
   pauseTime = 0;
   lapTime = 0;
+  totalPauseTime=0;
   while(true){
-  difference = millis()-startTime-pauseTime;
+  difference = millis()-totalPauseTime-stopWstart;
   h10 = difference / 36000000;      //3600 * 1000 * 10
   difference %= 36000000;  //3600 * 1000 * 10
   h1 = difference / 3600000;
@@ -100,7 +104,7 @@ void stopWatchLoop(uint8_t button){
   cs10 = difference / 100;
   difference %= 100;
   cs1 = difference / 10;
-  if(pauseTime == false){
+  if(pause == false && h10 <10){
     display.setFont(font22pt);
     display.setCursor(0,menuTextY[2]);
     display.print(h10);
@@ -115,29 +119,55 @@ void stopWatchLoop(uint8_t button){
     display.print(cs10);
     display.print(cs1); 
   }
-  /*pressed = getButtons();
-  if(pressed == startButton){
-    if(pause == true){
-      pauseTime = millis()-pauseTime;
-      pauseTime = false;
-    }else{
-      pauseTime = millis();
-      pause = true;
-    }
+  
+  pressed = display.getButtons();
+  if (buttonReleasedtwo && pressed) {
+      if(pressed == startButton){
+        if(pause == true){
+          if(reset == true){
+            stopWstart = millis();
+            reset = false;
+          }else{
+            totalPauseTime = millis()- pauseTime;
+          }
+          pause = false;
+        }else{
+          pauseTime = millis();
+          pause = true;
+        }
+      } else if(pressed == resetButton){
+        display.clearWindow(0, menuTextY[3], 96, 32);
+        display.setFont(font22pt);
+        display.setCursor(0,menuTextY[2]);
+        display.print("00:00:00");
+        display.setFont(font10pt);
+        display.print("00");
+        difference = 0;
+        pauseTime = 0;
+        pause = true;
+        reset = true;
+      } else if(pressed == lapButton && pause == false){
+        display.setFont(font10pt);
+        display.setCursor(66,menuTextY[0]); 
+        display.print(m10);
+        display.print(m1);
+        display.print(":");
+        display.print(s10);
+        display.print(s1);
+      } else if (pressed == backButton){
+        break;
+      }
+    buttonReleasedtwo = 0;
   }
-  else if (pressed == lapButton)
-  {
-    lapTime = (difference - lapTime);
-    String lapString = String(m10)+String(m1)+":"+String(s10)+String(s1);
-    display.setCursor(66, menuTextY[0]);
-    display.setFont(font10pt);
-    display.print(lapString);
-  } else if (button == resetButton)
-  {
+    if (!buttonReleasedtwo && !(pressed & 0x0F)) {
+      buttonReleasedtwo = 1;
+    }
     
-  }*/
   }
   
+   display.clearWindow(0, 12, 96, 64);
+   menuHandler = viewMenu;
+   menuHandler(0);
   
 }
 
