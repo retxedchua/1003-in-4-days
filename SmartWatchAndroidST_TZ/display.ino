@@ -176,10 +176,6 @@ void stopWatchLoop(uint8_t button){
   
 }
 
-void Timer(uint8_t button)  {
-   display.clearWindow(0, 12, 96, 64);
-
-}
 void displayTemp(uint8_t button) {
   
     currentDisplayState = displayStateMenu;

@@ -41,10 +41,10 @@ void newMenu(int8_t newIndex) {
   }
 }
 
-static const char PROGMEM mainMenuStrings0[] = "Stopwatch/Timer";
-static const char PROGMEM mainMenuStrings1[] = "Settings";
+static const char PROGMEM mainMenuStrings0[] = "Stopwatch";
+static const char PROGMEM mainMenuStrings1[] = "Step Tracker";
 static const char PROGMEM mainMenuStrings2[] = "Temperature";
-static const char PROGMEM mainMenuStrings3[] = "Step Tracker";
+static const char PROGMEM mainMenuStrings3[] = "Settings";
 
 
 static const char* const PROGMEM mainMenuStrings[] =
@@ -60,20 +60,6 @@ const menu_info mainMenuInfo =
   4,
   mainMenuStrings,
   mainMenu,
-};
-
-static const char PROGMEM stopwTimerMenuStrings0[] = "Stop Watch";
-
-static const char* const PROGMEM stopwTimerMenuStrings[] =
-{
-  stopwTimerMenuStrings0
-};
-
-const menu_info stopwTimerMenuInfo =
-{
-  1,
-  stopwTimerMenuStrings,
-  stopwTimerMenu,
 };
 
 static const char PROGMEM settingsMenuStrings0[] = "Set date/time";
@@ -118,11 +104,10 @@ const menu_info dateTimeMenuInfo =
   dateTimeMenu,
 };
 
-const menu_info menuList[] = {mainMenuInfo, dateTimeMenuInfo, stopwTimerMenuInfo, settingsMenuInfo};
+const menu_info menuList[] = {mainMenuInfo, dateTimeMenuInfo, settingsMenuInfo};
 #define mainMenuIndex 0
 #define dateTimeMenuIndex 1
-#define stopwTimerMenuIndex 2
-#define settingsMenuIndex 3
+#define settingsMenuIndex 2
 
 int currentVal = 0;
 int digits[4];
@@ -201,18 +186,18 @@ uint8_t editInt(uint8_t button, int *inVal, char *intName, void (*cb)()) {
 void mainMenu(uint8_t selection) {
   if (menu_debug_print)SerialMonitorInterface.println("mainMenuHandler");
   if (selection == 0) {
-    newMenu(stopwTimerMenuIndex);
+      stopWatch(selection);
   }
   if (selection == 1) {
-    newMenu(settingsMenuIndex);
+    const uint8_t backButton = TSButtonLowerLeft;
+    displayFootTracker(backButton);
   }
   if (selection == 2) {
     const uint8_t backButton = TSButtonLowerLeft;
     displayTemp(backButton);
   }
     if (selection == 3) {
-    const uint8_t backButton = TSButtonLowerLeft;
-    displayFootTracker(backButton);
+    newMenu(settingsMenuIndex);
   }
 }
 
@@ -235,16 +220,6 @@ void saveChangeCallback() {
   if (menu_debug_print)SerialMonitorInterface.println(dateTimeVariable);
 }
 
-void stopwTimerMenu(uint8_t selection) {
-  if (menu_debug_print)SerialMonitorInterface.print("stopwTimerMenu ");
-  if (menu_debug_print)SerialMonitorInterface.print(selection);
-  if (selection == 0) {
-      stopWatch(selection);
-  }
-  if (selection == 1) {
-    
-  }
-}
 
 void settingsMenu(uint8_t selection){
   if (menu_debug_print)SerialMonitorInterface.print("settingsMenu ");
