@@ -41,6 +41,7 @@ void buttonPress(uint8_t buttons) {
     }
   } else if (currentDisplayState == displayStateMenu) {
     if (menuHandler) {
+      display.clearWindow(0, 12, 96, 64);
       menuHandler(buttons);
     }
   } else if (currentDisplayState == displayStateEditor) {
