@@ -75,8 +75,8 @@ void stopWatch(uint8_t button) {
 }
 
 void stopWatchLoop(uint8_t button){
-  int cs1, cs10, s1, s10, m1, m10, h1, h10;
-  uint32_t stopWstart, pauseTime, lapTime, difference, totalPauseTime;
+  int cs1, cs10, s1, s10, m1, m10, h1, h10, laps1, laps10, lapm1, lapm10;
+  uint32_t stopWstart, pauseTime, lapTime, difference, lapdifference, totalPauseTime;
   boolean pause = false,reset = false;
   byte pressed;
   uint8_t buttonReleasedtwo = 1;
@@ -88,6 +88,10 @@ void stopWatchLoop(uint8_t button){
   m10 = 0;
   h1 = 0;
   h10 = 0;
+  laps1 = 0;
+  laps10 = 0;
+  lapm1 = 0;
+  lapm10 = 0;
   stopWstart = millis();
   difference = 0;
   pauseTime = 0;
@@ -150,16 +154,28 @@ void stopWatchLoop(uint8_t button){
         display.print("00");
         difference = 0;
         pauseTime = 0;
+        lapTime = 0;
         pause = true;
         reset = true;
       } else if(pressed == lapButton && pause == false){
+        difference = millis()-totalPauseTime-stopWstart;
+        lapdifference = difference - lapTime;
+        lapTime = lapTime + lapdifference;
+        lapdifference %= 3600000;
+        lapm10 = lapdifference / 600000;
+        lapdifference %= 600000;
+        lapm1 = lapdifference / 60000;
+        lapdifference %= 60000;
+        laps10 = lapdifference / 10000;
+        lapdifference %= 10000;
+        laps1 = lapdifference / 1000;
         display.setFont(font10pt);
         display.setCursor(66,menuTextY[0]); 
-        display.print(m10);
-        display.print(m1);
+        display.print(lapm10);
+        display.print(lapm1);
         display.print(":");
-        display.print(s10);
-        display.print(s1);
+        display.print(laps10);
+        display.print(laps1);
       } else if (pressed == backButton){
         break;
       }
